@@ -1,13 +1,14 @@
 {
   "name": "mybricks-plugin-locale",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "mybricks多语言插件",
   "main": "lib/index.umd.js",
   "module": "es/index.esm.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "rimraf lib/* && rimraf es/* && rollup -c ./rollup.config.js --watch",
-    "build": "rimraf lib/* && rimraf es/* && rollup -c ./rollup.config.js"
+    "build": "rimraf lib/* && rimraf es/* && rollup -c ./rollup.config.js",
+    "publish-prod": "npm install && npm run build && npm publish"
   },
   "keywords": [
     "mybricks",
