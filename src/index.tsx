@@ -12,7 +12,7 @@ interface IProps {
   onPackLoad?: ({ i18nLangContent }) => any
 }
 
-export default ({ defaultPackLink, onPackLoad }: IProps) => {
+export default ({ defaultPackLink, onPackLoad }: IProps = {}) => {
   const pluginInstance = {
     name: LOCALE_PLUGIN_NAME,
     namespace: LOCALE_PLUGIN_NAME,
@@ -63,6 +63,7 @@ export default ({ defaultPackLink, onPackLoad }: IProps) => {
       data.loadStats = EnumLoadStats.loading
       fetchPack({ link }).then(res => {
         data.loadStats = EnumLoadStats.loaded
+        console.log(`res`, res)
         return res
       }).then(res => {
         try {
@@ -72,8 +73,11 @@ export default ({ defaultPackLink, onPackLoad }: IProps) => {
               res[item.id] = item
               return res
             }, {})
+          } else {
+            data.i18nLangContent = res
           }
 
+          data.errorMsg = ''
           if (typeof onPackLoad === 'function') {
             onPackLoad({ i18nLangContent: data.i18nLangContent })
           }
