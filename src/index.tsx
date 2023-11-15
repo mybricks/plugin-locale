@@ -10,9 +10,10 @@ export { LOCALE_PLUGIN_NAME } from './constants'
 interface IProps {
   defaultPackLink?: string,
   onPackLoad?: ({ i18nLangContent }) => any
+  onUsedIdChanged?: ({ ids }) => any
 }
 
-export default ({ defaultPackLink, onPackLoad }: IProps = {}) => {
+export default ({ defaultPackLink, onPackLoad, onUsedIdChanged }: IProps = {}) => {
   const pluginInstance = {
     name: LOCALE_PLUGIN_NAME,
     namespace: LOCALE_PLUGIN_NAME,
@@ -40,12 +41,30 @@ export default ({ defaultPackLink, onPackLoad }: IProps = {}) => {
       // 加载语言包
       this.loadPack(data.langPackLink, data)
 
+      onUsedIdChanged({ ids: data.usedIds })
       // 注册实现方法
       locale?.registerImpl?.({
         searchByKeywords: this.genSearchByKeywords(data),
         getById: this.genGetById(data),
+        usedById: this.genUsedById(data),
         // searchById: this.searchById
       })
+    },
+
+    genUsedById: data => (id) => {
+      if (typeof id === 'undefined') return false
+      if (!Array.isArray(data.usedIds)) {
+        data.usedIds = []
+      }
+      if (data.usedIds.indexOf(id) === -1) {
+        data.usedIds = [...data.usedIds, id]
+      }
+
+
+      if (typeof onUsedIdChanged === 'function') {
+        onUsedIdChanged({ ids: data.usedIds })
+      }
+      return true
     },
 
     async loadPack(link, data: TLocalePluginData) {
@@ -63,7 +82,6 @@ export default ({ defaultPackLink, onPackLoad }: IProps = {}) => {
       data.loadStats = EnumLoadStats.loading
       fetchPack({ link }).then(res => {
         data.loadStats = EnumLoadStats.loaded
-        console.log(`res`, res)
         return res
       }).then(res => {
         try {
@@ -100,21 +118,14 @@ export default ({ defaultPackLink, onPackLoad }: IProps = {}) => {
 
     // 语言包的具体内容i18nLangContent，不保存，因为数据量大且是动态加载进来的
     toJSON({ data }) {
-      const { langPackLink, formatFn } = data
+      const { langPackLink, formatFn, usedIds } = data
       return {
         langPackLink: encodeURIComponent(langPackLink) !== langPackLink ? encodeURIComponent(langPackLink) : langPackLink,
         formatFn: encodeURIComponent(formatFn) !== formatFn ? encodeURIComponent(formatFn) : formatFn,
+        usedIds,
       }
     },
 
-    // searchById: (id: string) => {
-    //   const res = data.i18nLangContent[id] || {}
-    //   return {
-    //     getContent: (lang) => {
-    //       return res[lang] || res['zh'] || ''
-    //     }
-    //   }
-    // },
     genGetById: data => (id: string) => {
       const res = data.i18nLangContent[id] || {}
       return {

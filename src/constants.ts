@@ -11,6 +11,7 @@ export interface TLocalePluginData {
   i18nLangContent: {
     [id: string]: TLangItem
   },
+  usedIds: string[],
   loadStats: EnumLoadStats, // 是否在加载中
   errorMsg: string,
   enableFormat: boolean,
