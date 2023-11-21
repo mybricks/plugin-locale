@@ -11,9 +11,19 @@ interface IProps {
   defaultPackLink?: string,
   onPackLoad?: ({ i18nLangContent }) => any
   onUsedIdChanged?: ({ ids }) => any
+  // 默认语言包转换函数，将外部语言包转成内部格式
+  defaultTransform?: (loangContent: Object) => Array<{
+    id: string,
+    content: {
+      [lang: string]: string
+    }
+  }>
+  visible?: boolean
 }
 
-export default ({ defaultPackLink, onPackLoad, onUsedIdChanged }: IProps = {}) => {
+export default (props: IProps = {} as any) => {
+  const { defaultPackLink, onPackLoad, defaultTransform, visible = true, onUsedIdChanged } = props
+
   const pluginInstance = {
     name: LOCALE_PLUGIN_NAME,
     namespace: LOCALE_PLUGIN_NAME,
@@ -31,10 +41,13 @@ export default ({ defaultPackLink, onPackLoad, onUsedIdChanged }: IProps = {}) =
       // 参数初始化
       if (data.langPackLink) {
         data.langPackLink = decodeIfPossible(data.langPackLink)
+      } else if (defaultPackLink) {
+        data.langPackLink = defaultPackLink
       }
+
       if (data.formatFn) {
         data.formatFn = decodeIfPossible(data.formatFn)
-      } else {
+      } {
         data.formatFn = exampleFormatFunc
       }
 
@@ -85,7 +98,7 @@ export default ({ defaultPackLink, onPackLoad, onUsedIdChanged }: IProps = {}) =
         return res
       }).then(res => {
         try {
-          if (data.enableFormat) {
+          if (data.enableFormat || defaultTransform) {
             const contentList = this.transform(res, data)
             data.i18nLangContent = contentList.reduce((res, item) => {
               res[item.id] = item
@@ -110,10 +123,13 @@ export default ({ defaultPackLink, onPackLoad, onUsedIdChanged }: IProps = {}) =
     },
 
     transform(originData, data) {
-      const { formatFn } = data
-      const fn = decodeIfPossible(formatFn)
-
-      return eval(fn)(originData)
+      if (data.enableFormat) {
+        const { formatFn } = data
+        const fn = decodeIfPossible(formatFn)
+        return eval(fn)(originData)
+      } else {
+        return defaultTransform(originData)
+      }
     },
 
     // 语言包的具体内容i18nLangContent，不保存，因为数据量大且是动态加载进来的
@@ -140,8 +156,8 @@ export default ({ defaultPackLink, onPackLoad, onUsedIdChanged }: IProps = {}) =
         return []
       }
       return Object.values(data.i18nLangContent).filter(item => {
-        return item?.content?.['zh'].indexOf(keywords) !== -1
-      }).map(res => {
+        return item?.content?.['zh']?.indexOf?.(keywords) !== -1
+      })?.map?.(res => {
         const { id, content } = res || {}
         return {
           id,
@@ -160,7 +176,7 @@ export default ({ defaultPackLink, onPackLoad, onUsedIdChanged }: IProps = {}) =
           apiSet: ['locale'],
           render: (args: any) => {
             // @ts-ignore
-            return <Plugin {...args} loadPack={pluginInstance.loadPack.bind(pluginInstance)} />;
+            return <Plugin {...args} visible={visible} loadPack={pluginInstance.loadPack.bind(pluginInstance)} />;
           },
         },
       },
