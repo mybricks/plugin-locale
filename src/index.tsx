@@ -30,12 +30,7 @@ export default (props: IProps = {} as any) => {
     title: '多语言',
     description: '多语言插件',
     data,
-
-    // 获取当前语言包数据
-    getI18nLangContent() {
-      return this.data.i18nLangContent || {}
-    },
-
+    i18nLangContent: {},
     onLoad({ data, locale }) {
 
       // 参数初始化
@@ -57,8 +52,8 @@ export default (props: IProps = {} as any) => {
       onUsedIdChanged({ ids: data.usedIds })
       // 注册实现方法
       locale?.registerImpl?.({
-        searchByKeywords: this.genSearchByKeywords(data),
-        getById: this.genGetById(data),
+        searchByKeywords: this.genSearchByKeywords(pluginInstance),
+        getById: this.genGetById(pluginInstance),
         usedById: this.genUsedById(data),
         // searchById: this.searchById
       })
@@ -81,40 +76,40 @@ export default (props: IProps = {} as any) => {
     },
 
     async loadPack(link, data: TLocalePluginData) {
-      if (!link) return
+      if (!link) return {}
 
       data.errorMsg = ''
-      data.i18nLangContent = {}
       data.loadStats = EnumLoadStats.unload
 
       if (!isUrl(link)) {
         data.errorMsg = '请输入正确的url地址'
-        return
+        return {}
       }
 
       data.loadStats = EnumLoadStats.loading
-      fetchPack({ link }).then(res => {
+      return fetchPack({ link }).then(res => {
         data.loadStats = EnumLoadStats.loaded
         return res
       }).then(res => {
         try {
           if (data.enableFormat || defaultTransform) {
             const contentList = this.transform(res, data)
-            data.i18nLangContent = contentList.reduce((res, item) => {
+            pluginInstance.i18nLangContent = contentList.reduce((res, item) => {
               res[item.id] = item
               return res
             }, {})
           } else {
-            data.i18nLangContent = res
+            pluginInstance.i18nLangContent = res
           }
 
           data.errorMsg = ''
           if (typeof onPackLoad === 'function') {
-            onPackLoad({ i18nLangContent: data.i18nLangContent })
+            onPackLoad({ i18nLangContent: pluginInstance.i18nLangContent })
           }
         } catch (e) {
           data.errorMsg = '转换语言包出错'
         }
+        return pluginInstance.i18nLangContent
       }).catch(e => {
         data.errorMsg = '加载语言包出错'
         console.error(e)
@@ -142,8 +137,8 @@ export default (props: IProps = {} as any) => {
       }
     },
 
-    genGetById: data => (id: string) => {
-      const res = data.i18nLangContent[id] || {}
+    genGetById: pluginInstance => (id: string) => {
+      const res = pluginInstance.i18nLangContent[id] || {}
       return {
         id,
         keyCode: id,
@@ -151,11 +146,11 @@ export default (props: IProps = {} as any) => {
         remark: false
       }
     },
-    genSearchByKeywords: data => (keywords, langType) => {
-      if (!data.i18nLangContent || typeof data.i18nLangContent !== 'object') {
+    genSearchByKeywords: pluginInstance => (keywords, langType) => {
+      if (!pluginInstance.i18nLangContent || typeof pluginInstance.i18nLangContent !== 'object') {
         return []
       }
-      return Object.values(data.i18nLangContent).filter(item => {
+      return Object.values(pluginInstance.i18nLangContent).filter(item => {
         return item?.content?.['zh']?.indexOf?.(keywords) !== -1
       })?.map?.(res => {
         const { id, content } = res || {}
