@@ -94,6 +94,9 @@ export default (props: IProps = {} as any) => {
         try {
           if (data.enableFormat || defaultTransform) {
             const contentList = this.transform(res, data)
+            if (!Array.isArray(contentList)) {
+              throw new Error(`转化函数返回的必须是数组！`)
+            }
             pluginInstance.i18nLangContent = contentList.reduce((res, item) => {
               res[item.id] = item
               return res
@@ -107,6 +110,7 @@ export default (props: IProps = {} as any) => {
             onPackLoad({ i18nLangContent: pluginInstance.i18nLangContent })
           }
         } catch (e) {
+          console.error(`loadPack error:`, e)
           data.errorMsg = '转换语言包出错'
         }
         return pluginInstance.i18nLangContent

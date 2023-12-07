@@ -1,6 +1,6 @@
 {
-  "name": "mybricks-plugin-locale",
-  "version": "1.0.8",
+  "name": "@mybricks/plugin-locale",
+  "version": "1.0.0",
   "description": "mybricks多语言插件",
   "main": "lib/index.umd.js",
   "module": "es/index.esm.js",
