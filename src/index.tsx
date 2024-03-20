@@ -150,12 +150,13 @@ export default (props: IProps = {} as any) => {
         remark: false
       }
     },
-    genSearchByKeywords: pluginInstance => (keywords, langType) => {
+    genSearchByKeywords: pluginInstance => (keywords, langType, fuzzy) => {
       if (!pluginInstance.i18nLangContent || typeof pluginInstance.i18nLangContent !== 'object') {
         return []
       }
+
       return Object.values(pluginInstance.i18nLangContent).filter(item => {
-        return item?.content?.['zh']?.indexOf?.(keywords) !== -1
+        return fuzzy ? item?.content?.['zh']?.indexOf?.(keywords) !== -1 : item?.content?.['zh'] === keywords
       })?.map?.(res => {
         const { id, content } = res || {}
         return {
