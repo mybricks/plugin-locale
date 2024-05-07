@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Editor from '@mybricks/code-editor';
 import style from './index.less'
 import { importIcon } from '../icon'
-import { CDN, EnumLoadStats, TLocalePluginData, loadStatsInfo } from '../constants'
+import { CDN, EnumLoadStats, TLocalePluginData, exampleFormatFunc, loadStatsInfo } from '../constants'
 import { isUrl } from '../utils'
 import Switch from './components/Switch'
 
@@ -67,7 +67,7 @@ export default ({ data, loadPack, visible = true }: Props = {} as any) => {
               verticalScrollbarSize: 2,
             }}
             CDN={CDN}
-            value={decodeURIComponent(data.formatFn)}
+            value={decodeURIComponent(data.formatFn) || exampleFormatFunc}
             onBlur={e => {
               const value = e.getValue();
               if (data.formatFn !== decodeURIComponent(value)) {

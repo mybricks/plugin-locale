@@ -42,8 +42,6 @@ export default (props: IProps = {} as any) => {
 
       if (data.formatFn) {
         data.formatFn = decodeIfPossible(data.formatFn)
-      } {
-        data.formatFn = exampleFormatFunc
       }
 
       // 加载语言包
@@ -123,8 +121,8 @@ export default (props: IProps = {} as any) => {
 
     transform(originData, data) {
       if (data.enableFormat) {
-        const { formatFn } = data
-        const fn = decodeIfPossible(formatFn)
+        let { formatFn } = data
+        const fn = decodeIfPossible(formatFn || exampleFormatFunc)
         return eval(fn)(originData)
       } else {
         return defaultTransform(originData)
@@ -133,7 +131,7 @@ export default (props: IProps = {} as any) => {
 
     // 语言包的具体内容i18nLangContent，不保存，因为数据量大且是动态加载进来的
     toJSON({ data }) {
-      const { langPackLink, formatFn, usedIds } = data
+      const { langPackLink, formatFn = '', usedIds } = data
       return {
         langPackLink: encodeURIComponent(langPackLink) !== langPackLink ? encodeURIComponent(langPackLink) : langPackLink,
         formatFn: encodeURIComponent(formatFn) !== formatFn ? encodeURIComponent(formatFn) : formatFn,

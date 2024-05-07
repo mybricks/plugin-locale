@@ -2,7 +2,7 @@ import { EnumLoadStats, exampleFormatFunc } from "./constants";
 
 export default {
   langPackLink: '',
-  formatFn: exampleFormatFunc,
+  formatFn: '',
   enableFormat: false,
   usedIds: [],
   loadStats: EnumLoadStats.unload,

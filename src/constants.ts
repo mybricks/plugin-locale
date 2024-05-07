@@ -39,7 +39,7 @@ export const loadStatsInfo = {
   }
 }
 
-export const exampleFormatFunc = `export default function (packContentLoaded) {
+export const exampleFormatFunc = `(packContentLoaded) => {
 /** 返回格式：
  * Array<{
     id: stirng, // 单个语料的唯一识别id
