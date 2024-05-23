@@ -41,12 +41,18 @@ export const loadStatsInfo = {
 
 export const exampleFormatFunc = `(packContentLoaded) => {
 /** 返回格式：
- * Array<{
-    id: stirng, // 单个语料的唯一识别id
-    content: {
-      [lang: string]: string, // lang为语种， 值为该语种下的文本
+{ // 唯一id作为key
+  "1": {
+    "id": "1",
+    "content": {
+      "en": "hello",
+      "zh": "你好",
+      "zh-CN": "你好",
+      ... // 其他语言
     }
-  }>
+  },
+  ... // 其他语料
+}
 **/
   return packContentLoaded;
  }

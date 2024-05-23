@@ -1,6 +1,6 @@
 {
   "name": "@mybricks/plugin-locale",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "mybricks多语言插件",
   "main": "lib/index.umd.js",
   "module": "es/index.esm.js",
@@ -24,7 +24,7 @@
   "author": "MyBricks Team",
   "license": "ISC",
   "dependencies": {
-    "@mybricks/code-editor": "^1.1.7",
+    "@mybricks/code-editor": "^1.1.24",
     "antd": "^4.23.6",
     "axios": "^1.1.3",
     "dayjs": "^1.11.6"

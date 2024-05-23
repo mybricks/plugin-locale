@@ -91,14 +91,13 @@ export default (props: IProps = {} as any) => {
       }).then(res => {
         try {
           if (data.enableFormat || defaultTransform) {
-            const contentList = this.transform(res, data)
-            if (!Array.isArray(contentList)) {
-              throw new Error(`转化函数返回的必须是数组！`)
+            const i18nLangContent = this.transform(res, data)
+            if (typeof i18nLangContent !== 'object' || Array.isArray(i18nLangContent) || Object.values(i18nLangContent).some(item => !('id' in item || 'content' in item))) {
+              data.errorMsg = '请返回指定的格式'
+              return {}
+              // throw new Error(`转化函数返回的必须是对象！并且每个语料都必须包含id和content字段`)
             }
-            pluginInstance.i18nLangContent = contentList.reduce((res, item) => {
-              res[item.id] = item
-              return res
-            }, {})
+            pluginInstance.i18nLangContent = i18nLangContent
           } else {
             pluginInstance.i18nLangContent = res
           }

@@ -1,4 +1,4 @@
-export const isUrl = (url: string) => /^https?:\/\//.test(url)
+export const isUrl = (url: string) => /^https?:\/\//.test(url) || /^\//.test(url)
 
 export const decodeIfPossible = (str: string) => {
   try {

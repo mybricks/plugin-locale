@@ -26,7 +26,7 @@ export default ({ data, loadPack, visible = true }: Props = {} as any) => {
     </div>
     <div style={{ display: visible ? 'block' : 'none' }}>
       <div className={style.title}>
-        <span>语言包地址</span>
+        <span>语言包（json）地址</span>
         <span className={style.stats} style={{
           display: data.langPackLink !== '' ? 'inline-block' : 'none',
           backgroundColor: loadStatsInfo[data.loadStats]?.color
@@ -50,7 +50,14 @@ export default ({ data, loadPack, visible = true }: Props = {} as any) => {
       }}>
         <div className={style.formatCtr}>
           <div className={style.title}>格式化语言包</div>
-          <Switch defaultChecked={data.enableFormat} onChange={(checked) => data.enableFormat = checked} />
+          <Switch defaultChecked={data.enableFormat} onChange={(checked) => {
+            data.enableFormat = checked
+            if (checked) {
+              loadPack(data.langPackLink, data)
+            } else {
+              data.errorMsg = ''
+            }
+          }} />
         </div>
         <div style={{
           display: data.enableFormat ? 'block' : 'none',
