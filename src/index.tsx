@@ -161,7 +161,7 @@ export default (props: IProps = {} as any) => {
       }
 
       return Object.values(pluginInstance.i18nLangContent).filter(item => {
-        return fuzzy ? item?.content?.['zh']?.indexOf?.(keywords) !== -1 : item?.content?.['zh'] === keywords
+        return fuzzy ? Object.values(item?.content || {}).some(i => i.indexOf?.(keywords) !== -1) : Object.values(item?.content || {}).some(i => i === keywords)
       })?.map?.(res => {
         const { id, content } = res || {}
         return {
