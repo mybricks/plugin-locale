@@ -74,7 +74,12 @@ export default (props: IProps = {} as any) => {
     },
 
     async loadPack(link, data: TLocalePluginData) {
-      if (!link) return {}
+      if (!link) {
+        if (typeof onPackLoad === 'function') {
+          onPackLoad({ i18nLangContent: pluginInstance.i18nLangContent })
+        }
+        return {}
+      }
 
       data.errorMsg = ''
       data.loadStats = EnumLoadStats.unload
@@ -123,6 +128,9 @@ export default (props: IProps = {} as any) => {
         data.errorMsg = '加载语言包出错'
         console.error(e)
         data.loadStats = EnumLoadStats.unload
+        if (typeof onPackLoad === 'function') {
+          onPackLoad({ i18nLangContent: {} })
+        }
       })
     },
 
